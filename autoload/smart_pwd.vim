@@ -42,6 +42,19 @@ def NormKey(path: string): string
   return has('win32') ? tolower(p) : p
 enddef
 
+# g:project_management_active is set to a Vim9 boolean (true/false) by the
+# project-management plugin, while user options are usually numbers.  Accept
+# both without triggering E1138 (using a bool as a number).
+def Truthy(value: any): bool
+  if type(value) == v:t_bool
+    return value
+  endif
+  if type(value) == v:t_number
+    return value != 0
+  endif
+  return false
+enddef
+
 def IsUnder(key: string, root: string): bool
   if empty(root)
     return false
@@ -160,13 +173,13 @@ enddef
 # Switch the global working directory to the detected project root.
 # Returns true when the directory changed.
 export def Apply(): bool
-  if get(g:, 'smart_pwd_enable', 1) == 0
+  if !Truthy(get(g:, 'smart_pwd_enable', 1))
     return false
   endif
-  if get(g:, 'smart_pwd_lock', 0) != 0 || get(b:, 'smart_pwd_lock', 0) != 0
+  if Truthy(get(g:, 'smart_pwd_lock', 0)) || Truthy(get(b:, 'smart_pwd_lock', 0))
     return false
   endif
-  if get(g:, 'project_management_active', 0) != 0
+  if Truthy(get(g:, 'project_management_active', 0))
     return false
   endif
 
@@ -207,7 +220,7 @@ export def Apply(): bool
 enddef
 
 export def OnBufEnter(): void
-  if get(g:, 'smart_pwd_enable', 1) == 0
+  if !Truthy(get(g:, 'smart_pwd_enable', 1))
     return
   endif
   if timer_id != -1
@@ -218,7 +231,7 @@ export def OnBufEnter(): void
 enddef
 
 export def OnDirChanged(): void
-  if get(g:, 'project_management_active', 0) == 0
+  if !Truthy(get(g:, 'project_management_active', 0))
     last_pwd = getcwd()
   endif
 enddef
@@ -258,8 +271,8 @@ export def Status(): void
   var root = empty(name) ? '' : DetectRoot(fnamemodify(name, ':p'))
   echomsg printf(
     'smart-pwd: enabled=%d lock=%d cwd=%s',
-    get(g:, 'smart_pwd_enable', 1),
-    get(g:, 'smart_pwd_lock', 0),
+    Truthy(get(g:, 'smart_pwd_enable', 1)) ? 1 : 0,
+    Truthy(get(g:, 'smart_pwd_lock', 0)) ? 1 : 0,
     getcwd(),
   )
   echomsg printf('smart-pwd: buffer=%s', empty(name) ? '<none>' : fnamemodify(name, ':p'))

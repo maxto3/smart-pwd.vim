@@ -88,10 +88,10 @@ setlocal buftype=
 
 # project-management stickiness and close restore.
 execute 'cd ' .. fnameescape(plain)
-g:project_management_active = 1
+g:project_management_active = true
 execute 'cd ' .. fnameescape(repo)
 Check(!smart_pwd.Apply(), 'Project sessions are not changed by Apply')
-g:project_management_active = 0
+g:project_management_active = false
 execute 'doautocmd User ProjectClosed'
 Check(CwdIs(plain), 'ProjectClosed restores the last non-project PWD')
 
