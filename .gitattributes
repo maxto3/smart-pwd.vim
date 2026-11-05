@@ -1,0 +1,6 @@
+# Force LF for Vim9 scripts: CRLF triggers E1173 after enddef.
+* text=auto
+*.vim text eol=lf
+test/vimrc text eol=lf
+*.txt text eol=lf
+*.md text eol=lf

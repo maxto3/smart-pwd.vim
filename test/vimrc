@@ -1,0 +1,14 @@
+vim9script
+
+set nocompatible
+set noloadplugins
+set noswapfile
+
+var root = fnamemodify(expand('<sfile>:p:h'), ':h')
+execute 'set runtimepath^=' .. fnameescape(root)
+
+# Keep BufEnter timers out of the way; the test calls Apply() directly.
+g:smart_pwd_debounce_ms = 60000
+g:smart_pwd_ignore_dirs = []
+
+runtime plugin/smart_pwd.vim

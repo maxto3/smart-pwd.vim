@@ -1,0 +1,117 @@
+*smart-pwd.txt*  Switch the global working directory to the nearest project root
+
+==============================================================================
+CONTENTS                                                *smart-pwd-contents*
+
+  1. Introduction ........................ |smart-pwd-introduction|
+  2. Commands ............................ |smart-pwd-commands|
+  3. Options ............................. |smart-pwd-options|
+  4. Behavior ............................ |smart-pwd-behavior|
+  5. Limitations ......................... |smart-pwd-limitations|
+
+==============================================================================
+1. INTRODUCTION                                         *smart-pwd-introduction*
+
+smart-pwd.vim changes Vim's global working directory (`:cd`) to the nearest
+project root when a normal file buffer is entered.  It is an alternative to
+'enable-autochdir' / 'autochdir' that uses project markers instead of the
+file's own directory.
+
+A project root is the nearest ancestor directory that contains one of the
+markers in |g:smart_pwd_markers|, for example `.git`, `package.json`,
+`go.mod` or `Cargo.toml`.  Files outside any project keep the current
+working directory.
+
+The plugin does nothing while a project-management workspace is active.  If
+project-management emits `User ProjectClosed`, the directory used before the
+project was opened is restored.
+
+==============================================================================
+2. COMMANDS                                             *smart-pwd-commands*
+
+                                                        *:SmartPwdStatus*
+:SmartPwdStatus         Show the enabled/locked state, the current working
+                        directory, the detected root of the current buffer
+                        and the last non-project directory.
+
+                                                        *:SmartPwdDetect*
+:SmartPwdDetect         Print the root detected for the current buffer without
+                        changing the working directory.
+
+                                                        *:SmartPwdApply*
+:SmartPwdApply          Apply the detected root immediately, bypassing the
+                        BufEnter debounce.
+
+                                                        *:SmartPwdLock*
+:SmartPwdLock           Disable automatic directory changes until unlocked.
+
+                                                        *:SmartPwdUnlock*
+:SmartPwdUnlock         Re-enable automatic directory changes.
+
+                                                        *:SmartPwdClearCache*
+:SmartPwdClearCache     Clear the per-directory root cache.  Use this after
+                        adding or removing marker files in a project.
+
+==============================================================================
+3. OPTIONS                                              *smart-pwd-options*
+
+                                                        *g:smart_pwd_enable*
+Default: 1
+Set to 0 to disable automatic switching.
+
+                                                        *g:smart_pwd_debounce_ms*
+Default: 150
+Delay in milliseconds before a BufEnter is acted on.
+
+                                                        *g:smart_pwd_markers*
+Default: `.smart-pwd`, `.git`, `.hg`, `.svn`, `pnpm-workspace.yaml`,
+`go.work`, `package.json`, `tsconfig.json`, `pyproject.toml`, `setup.py`,
+`setup.cfg`, `Pipfile`, `go.mod`, `Cargo.toml`, `pom.xml`, `build.gradle`,
+`build.gradle.kts`, `settings.gradle`, `settings.gradle.kts`, `global.json`,
+`*.sln`, `*.csproj`, `*.fsproj`, `CMakeLists.txt`, `compile_commands.json`,
+`composer.json`, `.luarc.json`.
+
+The nearest ancestor with any marker becomes the project root.  Entries may
+contain glob patterns.  Add `.smart-pwd` to the intended root when a nested
+marker should be ignored.
+
+                                                        *g:smart_pwd_ignore_dirs*
+Default: `['~/.vim', '$TEMP', '$TMP']`
+Directories whose contents are never used for project detection.  The
+environment variables and `~` are expanded.
+
+                                                        *g:smart_pwd_skip_filetypes*
+Default: `['netrw', 'help', 'qf', 'terminal', 'fugitive', 'gitcommit',
+'coc', 'coctree', 'list']`
+Filetypes that never trigger a directory switch.
+
+                                                        *g:smart_pwd_verbose*
+Default: 0
+Set to 1 to log every automatic `:cd` and the ProjectClosed restore.
+
+==============================================================================
+4. BEHAVIOR                                             *smart-pwd-behavior*
+
+- Only normal, listed file buffers are considered.  Buffers with a non-empty
+  'buftype', netrw, help, quickfix, terminal and the configured filetypes are
+  skipped.
+- Detection walks from the file's directory to the filesystem root and stops
+  at the first directory containing a marker.
+- `$HOME` is a container, not a project: it is only used when it contains
+  `.git`, `.hg`, `.svn` or `.smart-pwd`.
+- The working directory is changed with `:cd` (global scope), not `:tcd` or
+  `:lcd`.
+- While |g:project_management_active| is true, no automatic change happens.
+  On `User ProjectClosed` the last non-project directory is restored.
+
+==============================================================================
+5. LIMITATIONS                                          *smart-pwd-limitations*
+
+- A global `:cd` also changes the base directory of terminals, fzf and
+  ripgrep started afterwards.
+- Nearest-marker mode treats a nested `package.json` as a separate project.
+  Use `.smart-pwd` at the intended root to override this.
+- The ProjectClosed restore requires a project-management version that emits
+  the `ProjectClosed` user event.
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
