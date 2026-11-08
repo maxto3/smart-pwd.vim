@@ -20,8 +20,10 @@
 ## 依赖
 
 - Vim 9.2+，支持 Vim9 script（GVim 同样适用）。
-- 可选：支持 `User ProjectClosed` 的 `project-management`。没有该事件时插件
-  仍可工作，只是关闭项目后不会恢复上次目录。
+- 可选配套插件：
+  [project-management](https://github.com/maxto3/vim-project-management)，需支持
+  `User ProjectClosed`（`a0f2cd7` 或更新）。smart-pwd 会与其项目状态协作；
+  未安装时插件仍可工作，只是 `:ProjectClose` 不会恢复之前的工作目录。
 
 ## 安装
 
@@ -38,6 +40,23 @@ set runtimepath^=~/.vim/plugged/smart-pwd
 ```
 
 安装后重启 Vim。
+
+## 与 project-management 的配合
+
+smart-pwd 与
+[project-management](https://github.com/maxto3/vim-project-management) 配套使用：
+
+```vim
+Plug 'maxto3/vim-project-management', { 'as': 'project-management' }
+Plug 'maxto3/smart-pwd.vim', { 'as': 'smart-pwd' }
+```
+
+- 项目工作区处于激活状态（`g:project_management_active`）时，smart-pwd 不改动
+  工作目录。
+- `:ProjectOpen` 把 PWD 设为项目根；`:ProjectClose` 触发
+  `User ProjectClosed`，smart-pwd 恢复打开项目前所在的目录。
+- project-management 需包含生命周期事件（`User ProjectOpened` /
+  `User ProjectClosed`，`a0f2cd7` 或更新）。旧版本只会恢复它自己的启动目录。
 
 ## 配置
 

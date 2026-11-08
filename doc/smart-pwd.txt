@@ -26,6 +26,19 @@ The plugin does nothing while a project-management workspace is active.  If
 project-management emits `User ProjectClosed`, the directory used before the
 project was opened is restored.
 
+                                                *smart-pwd-project-management*
+Dependency
+https://github.com/maxto3/vim-project-management
+
+smart-pwd is designed to work with project-management:
+- While a project workspace is active (`g:project_management_active`), smart-pwd
+  does not change the working directory.
+- `:ProjectClose` emits `User ProjectClosed` (project-management `a0f2cd7` or
+  newer), and smart-pwd restores the directory that was active before the
+  project opened.
+- Without that companion, automatic detection still works; only the restore
+  step is skipped.
+
 ==============================================================================
 2. COMMANDS                                             *smart-pwd-commands*
 
@@ -112,6 +125,6 @@ Set to 1 to log every automatic `:cd` and the ProjectClosed restore.
 - Nearest-marker mode treats a nested `package.json` as a separate project.
   Use `.smart-pwd` at the intended root to override this.
 - The ProjectClosed restore requires a project-management version that emits
-  the `ProjectClosed` user event.
+  the `ProjectClosed` user event (`a0f2cd7` or newer).
 
  vim:tw=78:ts=8:noet:ft=help:norl:

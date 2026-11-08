@@ -25,9 +25,11 @@ file. This plugin instead finds the **project root** (the nearest `.git`,
 ## Requirements
 
 - Vim 9.2 or newer with Vim9 script support (GVim included).
-- Optional: `project-management` with `User ProjectClosed` support for the
-  close restore behavior. Without it, the plugin still works; only the
-  restore step is skipped.
+- Optional companion:
+  [project-management](https://github.com/maxto3/vim-project-management), with
+  `User ProjectClosed` support (`a0f2cd7` or newer). smart-pwd cooperates with
+  its workspace state; without it the plugin still works, but `:ProjectClose`
+  does not restore the previous working directory.
 
 ## Installation
 
@@ -45,6 +47,25 @@ set runtimepath^=~/.vim/plugged/smart-pwd
 ```
 
 Restart Vim after installing.
+
+## Integration with project-management
+
+smart-pwd is designed to work alongside
+[project-management](https://github.com/maxto3/vim-project-management):
+
+```vim
+Plug 'maxto3/vim-project-management', { 'as': 'project-management' }
+Plug 'maxto3/smart-pwd.vim', { 'as': 'smart-pwd' }
+```
+
+- While a project workspace is active (`g:project_management_active`),
+  smart-pwd leaves the working directory alone.
+- `:ProjectOpen` sets the PWD to the project root; `:ProjectClose` emits
+  `User ProjectClosed`, and smart-pwd restores the directory that was active
+  before the project opened.
+- The project-management version must include the lifecycle events
+  (`User ProjectOpened` / `User ProjectClosed`, `a0f2cd7` or newer). Older
+  versions only restore their own startup directory.
 
 ## Configuration
 
