@@ -25,14 +25,13 @@
 
 ## 安装
 
-插件以本地仓库方式开发。安装到 Vim 插件目录并交给 vim-plug 管理：
+从 GitHub 通过 vim-plug 安装：
 
 ```vim
-" 按实际路径调整。
-Plug 'file:///D:/source/repos/smart-pwd.vim', { 'as': 'smart-pwd' }
+Plug 'maxto3/smart-pwd.vim', { 'as': 'smart-pwd' }
 ```
 
-或克隆/复制到 `~/.vim/plugged/smart-pwd` 后加入 `'runtimepath'`：
+或克隆到 `~/.vim/plugged/smart-pwd` 后加入 `'runtimepath'`：
 
 ```vim
 set runtimepath^=~/.vim/plugged/smart-pwd

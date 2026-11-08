@@ -31,15 +31,13 @@ file. This plugin instead finds the **project root** (the nearest `.git`,
 
 ## Installation
 
-The plugin is developed as a local repository. Install it into the Vim plugin
-directory and let vim-plug manage it:
+Install from GitHub with vim-plug:
 
 ```vim
-" Adjust the path to your checkout.
-Plug 'file:///D:/source/repos/smart-pwd.vim', { 'as': 'smart-pwd' }
+Plug 'maxto3/smart-pwd.vim', { 'as': 'smart-pwd' }
 ```
 
-Or copy/clone it into `~/.vim/plugged/smart-pwd` and add it to
+Or clone it into `~/.vim/plugged/smart-pwd` and add the directory to
 `'runtimepath'`:
 
 ```vim
